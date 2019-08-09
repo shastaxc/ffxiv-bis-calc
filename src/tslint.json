@@ -12,6 +12,7 @@
       "element",
       "fbc",
       "kebab-case"
-    ]
+    ],
+    "prefer-for-of": false
   }
 }

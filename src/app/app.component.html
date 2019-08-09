@@ -1,21 +1,180 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<h1>DNC Best-in-Slot calculator</h1>
+
+Calculate BiS with food <input type="checkbox" [(ngModel)]="useFood" [ngModelOptions]="{standalone: true}">
+<br />
+
+<button (click)="calcBisSet()">Calculate BiS</button>
+<br /><br />
+
+<ng-container *ngIf="(bisSetInfo$ | async) as bis">
+    <h4>DNC BiS</h4> 
+    <div *ngFor="let set of bis; let i = index">
+        <strong>Set #:</strong> {{set.setNumber | number}} of {{totalCombinations | number}}<br />
+        <strong>Damage Increase from Substats:</strong> {{((set.dmgIndex - 1) | percent: '1.0-7') || 'TBD'}}<br />
+        <strong>GCD:</strong> {{set.gcdTime || 'TBD'}}<br />
+        <br />
+
+        <table class="table-borders">
+            <thead>
+                <tr>
+                    <th>Slot</th>
+                    <th>Materia Option</th>
+                    <th>Gear Name</th>
+                    <th>DH</th>
+                    <th>Crit</th>
+                    <th>Det</th>
+                    <th>Speed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Main Hand</td>
+                    <td>{{set.gearSet.mainHand?.materiaSet}}</td>
+                    <td>{{set.gearSet.mainHand?.name}}</td>
+                    <td>{{set.gearSet.mainHand?.baseStats.directHit + set.gearSet.mainHand?.materiaStats.directHit}}</td>
+                    <td>{{set.gearSet.mainHand?.baseStats.criticalHit + set.gearSet.mainHand?.materiaStats.criticalHit}}</td>
+                    <td>{{set.gearSet.mainHand?.baseStats.determination + set.gearSet.mainHand?.materiaStats.determination}}</td>
+                    <td>{{set.gearSet.mainHand?.baseStats.speed + set.gearSet.mainHand?.materiaStats.speed}}</td>
+                </tr>
+                <tr *ngIf="set.gearSet.offHand">
+                    <td>Off Hand</td>
+                    <td>{{set.gearSet.offHand?.materiaSet}}</td>
+                    <td>{{set.gearSet.offHand?.name}}</td>
+                    <td>{{set.gearSet.offHand?.baseStats.directHit + set.gearSet.offHand?.materiaStats.directHit}}</td>
+                    <td>{{set.gearSet.offHand?.baseStats.criticalHit + set.gearSet.offHand?.materiaStats.criticalHit}}</td>
+                    <td>{{set.gearSet.offHand?.baseStats.determination + set.gearSet.offHand?.materiaStats.determination}}</td>
+                    <td>{{set.gearSet.offHand?.baseStats.speed + set.gearSet.offHand?.materiaStats.speed}}</td>
+                </tr>
+                <tr>
+                    <td>Head</td>
+                    <td>{{set.gearSet.head?.materiaSet}}</td>
+                    <td>{{set.gearSet.head?.name}}</td>
+                    <td>{{set.gearSet.head?.baseStats.directHit + set.gearSet.head?.materiaStats.directHit}}</td>
+                    <td>{{set.gearSet.head?.baseStats.criticalHit + set.gearSet.head?.materiaStats.criticalHit}}</td>
+                    <td>{{set.gearSet.head?.baseStats.determination + set.gearSet.head?.materiaStats.determination}}</td>
+                    <td>{{set.gearSet.head?.baseStats.speed + set.gearSet.head?.materiaStats.speed}}</td>
+                </tr>
+                <tr>
+                    <td>Body</td>
+                    <td>{{set.gearSet.body?.materiaSet}}</td>
+                    <td>{{set.gearSet.body?.name}}</td>
+                    <td>{{set.gearSet.body?.baseStats.directHit + set.gearSet.body?.materiaStats.directHit}}</td>
+                    <td>{{set.gearSet.body?.baseStats.criticalHit + set.gearSet.body?.materiaStats.criticalHit}}</td>
+                    <td>{{set.gearSet.body?.baseStats.determination + set.gearSet.body?.materiaStats.determination}}</td>
+                    <td>{{set.gearSet.body?.baseStats.speed + set.gearSet.body?.materiaStats.speed}}</td>
+                </tr>
+                <tr>
+                    <td>Hands</td>
+                    <td>{{set.gearSet.hands?.materiaSet}}</td>
+                    <td>{{set.gearSet.hands?.name}}</td>
+                    <td>{{set.gearSet.hands?.baseStats.directHit + set.gearSet.hands?.materiaStats.directHit}}</td>
+                    <td>{{set.gearSet.hands?.baseStats.criticalHit + set.gearSet.hands?.materiaStats.criticalHit}}</td>
+                    <td>{{set.gearSet.hands?.baseStats.determination + set.gearSet.hands?.materiaStats.determination}}</td>
+                    <td>{{set.gearSet.hands?.baseStats.speed + set.gearSet.hands?.materiaStats.speed}}</td>
+                </tr>
+                <tr>
+                    <td>Waist</td>
+                    <td>{{set.gearSet.waist?.materiaSet}}</td>
+                    <td>{{set.gearSet.waist?.name}}</td>
+                    <td>{{set.gearSet.waist?.baseStats.directHit + set.gearSet.waist?.materiaStats.directHit}}</td>
+                    <td>{{set.gearSet.waist?.baseStats.criticalHit + set.gearSet.waist?.materiaStats.criticalHit}}</td>
+                    <td>{{set.gearSet.waist?.baseStats.determination + set.gearSet.waist?.materiaStats.determination}}</td>
+                    <td>{{set.gearSet.waist?.baseStats.speed + set.gearSet.waist?.materiaStats.speed}}</td>
+                </tr>
+                <tr>
+                    <td>Legs</td>
+                    <td>{{set.gearSet.legs?.materiaSet}}</td>
+                    <td>{{set.gearSet.legs?.name}}</td>
+                    <td>{{set.gearSet.legs?.baseStats.directHit + set.gearSet.legs?.materiaStats.directHit}}</td>
+                    <td>{{set.gearSet.legs?.baseStats.criticalHit + set.gearSet.legs?.materiaStats.criticalHit}}</td>
+                    <td>{{set.gearSet.legs?.baseStats.determination + set.gearSet.legs?.materiaStats.determination}}</td>
+                    <td>{{set.gearSet.legs?.baseStats.speed + set.gearSet.legs?.materiaStats.speed}}</td>
+                </tr>
+                <tr>
+                    <td>Feet</td>
+                    <td>{{set.gearSet.feet?.materiaSet}}</td>
+                    <td>{{set.gearSet.feet?.name}}</td>
+                    <td>{{set.gearSet.feet?.baseStats.directHit + set.gearSet.feet?.materiaStats.directHit}}</td>
+                    <td>{{set.gearSet.feet?.baseStats.criticalHit + set.gearSet.feet?.materiaStats.criticalHit}}</td>
+                    <td>{{set.gearSet.feet?.baseStats.determination + set.gearSet.feet?.materiaStats.determination}}</td>
+                    <td>{{set.gearSet.feet?.baseStats.speed + set.gearSet.feet?.materiaStats.speed}}</td>
+                </tr>
+                <tr>
+                    <td>Ears</td>
+                    <td>{{set.gearSet.ears?.materiaSet}}</td>
+                    <td>{{set.gearSet.ears?.name}}</td>
+                    <td>{{set.gearSet.ears?.baseStats.directHit + set.gearSet.ears?.materiaStats.directHit}}</td>
+                    <td>{{set.gearSet.ears?.baseStats.criticalHit + set.gearSet.ears?.materiaStats.criticalHit}}</td>
+                    <td>{{set.gearSet.ears?.baseStats.determination + set.gearSet.ears?.materiaStats.determination}}</td>
+                    <td>{{set.gearSet.ears?.baseStats.speed + set.gearSet.ears?.materiaStats.speed}}</td>
+                </tr>
+                <tr>
+                    <td>Neck</td>
+                    <td>{{set.gearSet.neck?.materiaSet}}</td>
+                    <td>{{set.gearSet.neck?.name}}</td>
+                    <td>{{set.gearSet.neck?.baseStats.directHit + set.gearSet.neck?.materiaStats.directHit}}</td>
+                    <td>{{set.gearSet.neck?.baseStats.criticalHit + set.gearSet.neck?.materiaStats.criticalHit}}</td>
+                    <td>{{set.gearSet.neck?.baseStats.determination + set.gearSet.neck?.materiaStats.determination}}</td>
+                    <td>{{set.gearSet.neck?.baseStats.speed + set.gearSet.neck?.materiaStats.speed}}</td>
+                </tr>
+                <tr>
+                    <td>Wrists</td>
+                    <td>{{set.gearSet.wrists?.materiaSet}}</td>
+                    <td>{{set.gearSet.wrists?.name}}</td>
+                    <td>{{set.gearSet.wrists?.baseStats.directHit + set.gearSet.wrists?.materiaStats.directHit}}</td>
+                    <td>{{set.gearSet.wrists?.baseStats.criticalHit + set.gearSet.wrists?.materiaStats.criticalHit}}</td>
+                    <td>{{set.gearSet.wrists?.baseStats.determination + set.gearSet.wrists?.materiaStats.determination}}</td>
+                    <td>{{set.gearSet.wrists?.baseStats.speed + set.gearSet.wrists?.materiaStats.speed}}</td>
+                </tr>
+                <tr>
+                    <td>Left Ring</td>
+                    <td>{{set.gearSet.leftRing?.materiaSet}}</td>
+                    <td>{{set.gearSet.leftRing?.name}}</td>
+                    <td>{{set.gearSet.leftRing?.baseStats.directHit + set.gearSet.leftRing?.materiaStats.directHit}}</td>
+                    <td>{{set.gearSet.leftRing?.baseStats.criticalHit + set.gearSet.leftRing?.materiaStats.criticalHit}}</td>
+                    <td>{{set.gearSet.leftRing?.baseStats.determination + set.gearSet.leftRing?.materiaStats.determination}}</td>
+                    <td>{{set.gearSet.leftRing?.baseStats.speed + set.gearSet.leftRing?.materiaStats.speed}}</td>
+                </tr>
+                <tr>
+                    <td>Right Ring</td>
+                    <td>{{set.gearSet.rightRing?.materiaSet}}</td>
+                    <td>{{set.gearSet.rightRing?.name}}</td>
+                    <td>{{set.gearSet.rightRing?.baseStats.directHit + set.gearSet.rightRing?.materiaStats.directHit}}</td>
+                    <td>{{set.gearSet.rightRing?.baseStats.criticalHit + set.gearSet.rightRing?.materiaStats.criticalHit}}</td>
+                    <td>{{set.gearSet.rightRing?.baseStats.determination + set.gearSet.rightRing?.materiaStats.determination}}</td>
+                    <td>{{set.gearSet.rightRing?.baseStats.speed + set.gearSet.rightRing?.materiaStats.speed}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <br /><br />
+        <div *ngIf="useFood">
+            <table *ngIf="set.bestFoods as bisFoods" class="table-borders">
+                <thead>
+                    <tr>
+                        <th>Food Name</th>
+                        <th>Dmg Increase %</th>
+                        <th>New GCD</th>
+                        <th>DH</th>
+                        <th>Crit</th>
+                        <th>Det</th>
+                        <th>Speed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let foodInfo of bisFoods">
+                        <td>{{foodInfo.food.name}}</td>
+                        <td>{{((foodInfo.dmgIndex - set.dmgIndex) / set.dmgIndex) | percent: '1.0-7'}}</td>
+                        <td>{{foodInfo.gcdTime}}</td>
+                        <td><span *ngIf="foodInfo.dhAdded">{{foodInfo.dhAdded}} (of {{foodInfo.food.stats.dhMax}})</span></td>
+                        <td><span *ngIf="foodInfo.critAdded">{{foodInfo.critAdded}} (of {{foodInfo.food.stats.critMax}})</span></td>
+                        <td><span *ngIf="foodInfo.detAdded">{{foodInfo.detAdded}} (of {{foodInfo.food.stats.detMax}})</span></td>
+                        <td><span *ngIf="foodInfo.skillSpeedAdded">{{foodInfo.skillSpeedAdded}} (of {{foodInfo.food.stats.skillSpeedMax}})</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br /><br />
+    </div>
+</ng-container>
 
 <router-outlet></router-outlet>

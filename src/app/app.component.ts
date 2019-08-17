@@ -276,16 +276,16 @@ export class AppComponent {
 
     // Do not include base stats of a naked character
     private calcCriticalHitDmgIndex(stat: number): number {
-        const critRate = (Math.floor(200 * stat / levelMod) + 50) / 1000;
+        const critRate = ((Math.floor(200 * stat / levelMod) + 50) / 1000) + this.critRateIncrease;
         const critDmgBonus = (Math.floor(200 * stat / levelMod) + 400) / 1000;
-        const dmgIndex = 1 + ((critRate + this.critRateIncrease) * critDmgBonus);
+        const dmgIndex = 1 + (critRate * critDmgBonus);
         return dmgIndex;
     }
 
     private calcDirectHitDmgIndex(stat: number): number {
-        const directHitRate = (Math.floor(550 * stat / levelMod)) / 1000;
+        const directHitRate = ((Math.floor(550 * stat / levelMod)) / 1000) + this.dhRateIncrease;
         const directHitDmgBonus = 0.25;
-        const dmgIndex = 1 + ((directHitRate + this.dhRateIncrease) * directHitDmgBonus);
+        const dmgIndex = 1 + (directHitRate * directHitDmgBonus);
         return dmgIndex;
     }
 
